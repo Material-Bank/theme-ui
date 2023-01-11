@@ -57,9 +57,8 @@ const boxSystemProps = [
 type BoxSystemPropsKeys = typeof boxSystemProps[number]
 type BoxSystemProps = Pick<ThemeUICSSProperties, BoxSystemPropsKeys>
 
-export interface BoxOwnProps extends BoxSystemProps {
+export interface BoxOwnProps extends BoxSystemProps, VariantProperty {
   as?: React.ElementType
-  variant?: VariantProperty
   css?: Interpolation<any>
   sx?: ThemeUIStyleObject
 }
