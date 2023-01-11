@@ -54,21 +54,47 @@ export function get(
 }
 
 export const getObjectWithVariants = (obj: any, theme: Theme): CSSObject => {
-  if (obj && obj['variant']) {
-    let result: CSSObject = {}
-    for (const key in obj) {
-      const x = obj[key]
-      if (key === 'variant') {
-        const val = typeof x === 'function' ? x(theme) : x
-        const variant = getObjectWithVariants(get(theme, val as string), theme)
-        result = { ...result, ...variant }
-      } else {
-        result[key] = x as CSSObject
+  const withVariants = (input: any) => {
+    if (input?.variant) {
+      let result: CSSObject = {}
+
+      for (const key in input) {
+        const x = input[key]
+
+        if (key === 'variant') {
+          const val = typeof x === 'function' ? x(theme) : x
+          const variant = withVariants(get(theme, val as string))
+
+          result = { ...result, ...variant }
+        } else {
+          result[key] = x as CSSObject
+        }
       }
+
+      return result
     }
-    return result
+
+    return input as CSSObject
   }
-  return obj as CSSObject
+
+  if (Array.isArray(obj?.variant)) {
+    const responsiveVariants = responsive({ variant: obj.variant })(theme)
+    let result: any = {}
+
+    for (const key in responsiveVariants) {
+      // unwrap nested variant for each media query
+      result = { ...result, [key]: withVariants(responsiveVariants[key]) }
+    }
+
+    // root variant
+    result = withVariants(result)
+    result = { ...result, ...obj }
+    delete result.variant
+
+    return result
+  } else {
+    return withVariants(obj)
+  }
 }
 
 export const defaultBreakpoints = [40, 52, 64].map((n) => n + 'em')

@@ -4,7 +4,7 @@
   "main": "dist/theme-ui-core-jsx-runtime.cjs.js",
   "module": "dist/theme-ui-core-jsx-runtime.esm.js",
   "types": "dist/theme-ui-core-jsx-runtime.cjs.d.ts",
-  "dependencies": {
+  "peerDependencies": {
     "@emotion/react": "^11",
     "react": "^18"
   },

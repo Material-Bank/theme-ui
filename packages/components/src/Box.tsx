@@ -12,6 +12,7 @@ import {
   get,
   ThemeUICSSProperties,
   ThemeUIStyleObject,
+  VariantProperty,
 } from '@theme-ui/css'
 import type { Assign } from './types'
 import type { __ThemeUIComponentsInternalProps } from './util'
@@ -58,7 +59,7 @@ type BoxSystemProps = Pick<ThemeUICSSProperties, BoxSystemPropsKeys>
 
 export interface BoxOwnProps extends BoxSystemProps {
   as?: React.ElementType
-  variant?: string
+  variant?: VariantProperty
   css?: Interpolation<any>
   sx?: ThemeUIStyleObject
 }
@@ -110,18 +111,22 @@ export const Box = forwardRef<any, BoxProps>(function Box(props, ref) {
 
   const __cssStyles = css(__css)(theme)
 
-  const variantInTheme =
-    get(theme, `${__themeKey}.${variant}`) || get(theme, variant)
-  const variantStyles = variantInTheme && css(variantInTheme)(theme)
+  let variantKey
 
-  const sxPropStyles = css(sx)(theme)
+  if (__themeKey) {
+    variantKey = Array.isArray(variant)
+      ? variant.map((v) => `${__themeKey}.${v}`)
+      : `${__themeKey}.${variant}`
+  } else {
+    variantKey = variant
+  }
 
+  const sxWithVariant = { variant: variantKey, ...sx } as ThemeUIStyleObject
+  const sxPropStyles = css(sxWithVariant)(theme)
   const systemPropsStyles = css(pickSystemProps(rest))(theme)
-
   const style: ArrayInterpolation<unknown> = [
     baseStyles,
     __cssStyles,
-    variantStyles,
     sxPropStyles,
     systemPropsStyles,
     cssProp,

@@ -469,9 +469,13 @@ export interface VariantProperty {
    *   variant: 'buttons.primary',
    * })(theme)
    *
+   * const result = css({
+   *   variant: ['buttons.primary', null, 'buttons.secondary'],
+   * })(theme)
+   *
    * @see https://styled-system.com/variants
    */
-  variant?: string
+  variant?: string | (string | null)[]
 }
 
 export interface ThemeDerivedStyles {
