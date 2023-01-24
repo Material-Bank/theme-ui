@@ -353,7 +353,9 @@ const responsive =
         continue
       }
       if (!Array.isArray(value)) {
-        next[key] = value
+        next[key] = breakpoints.includes(key)
+          ? { ...next[key], ...value } // merge breakpoints objects by default
+          : value
         continue
       }
       for (let i = 0; i < value.slice(0, mediaQueries.length).length; i++) {
