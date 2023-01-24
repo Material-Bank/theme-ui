@@ -53,7 +53,11 @@ export function get(
   return hasDefault(obj) ? obj[THEME_UI_DEFAULT_KEY] : obj
 }
 
-export const getObjectWithVariants = (obj: any, theme: Theme): CSSObject => {
+export const getObjectWithVariants = (
+  obj: any,
+  theme: Theme,
+  source: any = theme
+): CSSObject => {
   const withVariants = (input: any) => {
     if (input?.variant) {
       let result: CSSObject = {}
@@ -63,7 +67,7 @@ export const getObjectWithVariants = (obj: any, theme: Theme): CSSObject => {
 
         if (key === 'variant') {
           const val = typeof x === 'function' ? x(theme) : x
-          const variant = withVariants(get(theme, val as string))
+          const variant = withVariants(get(source, val as string))
 
           result = { ...result, ...variant }
         } else {
@@ -78,7 +82,7 @@ export const getObjectWithVariants = (obj: any, theme: Theme): CSSObject => {
   }
 
   if (Array.isArray(obj?.variant)) {
-    const responsiveVariants = responsive({ variant: obj.variant })(theme)
+    const responsiveVariants = responsive(obj)(theme)
     let result: any = {}
 
     for (const key in responsiveVariants) {
@@ -88,13 +92,24 @@ export const getObjectWithVariants = (obj: any, theme: Theme): CSSObject => {
 
     // root variant
     result = withVariants(result)
-    result = { ...result, ...obj }
-    delete result.variant
 
     return result
   } else {
     return withVariants(obj)
   }
+}
+
+export const variants = (source: any, theme: Theme) => {
+  return (selector: any) =>
+    Object.entries(selector).reduce(
+      (acc, [selectorKey, selectorValue]) =>
+        getObjectWithVariants(
+          { ...acc, variant: selectorValue },
+          theme,
+          source[selectorKey]
+        ),
+      {}
+    )
 }
 
 export const defaultBreakpoints = [40, 52, 64].map((n) => n + 'em')
