@@ -1,3 +1,4 @@
+import { useThemeUILockBreakpointContext } from './lock-breakpoint-context'
 import type {
   CSSObject,
   ThemeUIStyleObject,
@@ -7,6 +8,11 @@ import type {
 } from './types'
 
 export * from './types'
+
+export {
+  ThemeUILockBreakpointProvider,
+  useThemeUILockBreakpointContext,
+} from './lock-breakpoint-context'
 
 /**
  * Allows for nested scales with shorthand values
@@ -356,6 +362,8 @@ const responsive =
         n.includes('@media') ? n : `@media screen and (min-width: ${n})`
       ),
     ]
+    const { breakpointIndex: lockedBreakpointIndex } =
+      useThemeUILockBreakpointContext()
 
     for (const k in styles) {
       const key = k as keyof typeof styles
@@ -373,17 +381,32 @@ const responsive =
           : value
         continue
       }
-      for (let i = 0; i < value.slice(0, mediaQueries.length).length; i++) {
-        const media = mediaQueries[i]
-        if (!media) {
-          next[key] = value[i]
-          continue
+
+      if (lockedBreakpointIndex !== undefined && lockedBreakpointIndex >= 0) {
+        let singleValue = value[lockedBreakpointIndex]
+
+        if (singleValue === null) {
+          singleValue = value
+            .slice(0, lockedBreakpointIndex)
+            .reverse()
+            .find((v) => v !== null)
         }
-        next[media] = next[media] || {}
-        if (value[i] == null) continue
-        ;(next[media] as Record<string, any>)[key] = value[i]
+
+        next[key] = singleValue
+      } else {
+        for (let i = 0; i < value.slice(0, mediaQueries.length).length; i++) {
+          const media = mediaQueries[i]
+          if (!media) {
+            next[key] = value[i]
+            continue
+          }
+          next[media] = next[media] || {}
+          if (value[i] == null) continue
+          ;(next[media] as Record<string, any>)[key] = value[i]
+        }
       }
     }
+
     return next
   }
 

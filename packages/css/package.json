@@ -16,6 +16,7 @@
     "csstype": "^3.0.10"
   },
   "peerDependencies": {
+    "react": ">=18",
     "@emotion/react": "^11"
   },
   "devDependencies": {
