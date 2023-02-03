@@ -73,7 +73,9 @@ export const getObjectWithVariants = (
 
         if (key === 'variant') {
           const val = typeof x === 'function' ? x(theme) : x
-          const variant = withVariants(get(source, val as string))
+          const variant = withVariants(
+            get(source, val as string) ?? get(theme, val as string) // get from global theme variants if it's not in source
+          )
 
           result = { ...result, ...variant }
         } else {
