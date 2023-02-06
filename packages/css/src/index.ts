@@ -1,4 +1,7 @@
-import { useThemeUILockBreakpointContext } from './lock-breakpoint-context'
+import {
+  ThemeUILockBreakpointContext,
+  useThemeUILockBreakpointContext,
+} from './lock-breakpoint-context'
 import type {
   CSSObject,
   ThemeUIStyleObject,
@@ -8,11 +11,7 @@ import type {
 } from './types'
 
 export * from './types'
-
-export {
-  ThemeUILockBreakpointProvider,
-  useThemeUILockBreakpointContext,
-} from './lock-breakpoint-context'
+export * from './lock-breakpoint-context'
 
 /**
  * Allows for nested scales with shorthand values
@@ -355,6 +354,8 @@ const transforms = [
 const responsive =
   (styles: Exclude<ThemeUIStyleObject, ThemeDerivedStyles>) =>
   (theme?: Theme) => {
+    const { breakpointIndex: lockedBreakpointIndex } =
+      ThemeUILockBreakpointContext._currentValue ?? {}
     const next: Exclude<ThemeUIStyleObject, ThemeDerivedStyles> = {}
     const breakpoints =
       (theme && (theme.breakpoints as string[])) || defaultBreakpoints
@@ -364,8 +365,6 @@ const responsive =
         n.includes('@media') ? n : `@media screen and (min-width: ${n})`
       ),
     ]
-    const { breakpointIndex: lockedBreakpointIndex } =
-      useThemeUILockBreakpointContext()
 
     for (const k in styles) {
       const key = k as keyof typeof styles
