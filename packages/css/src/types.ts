@@ -477,7 +477,7 @@ export interface VariantProperty<T = string> {
    *
    * @see https://styled-system.com/variants
    */
-  variant?: ResponsiveVariant<T>
+  variant?: ResponsiveVariant<T> | null
 }
 
 export interface ThemeDerivedStyles {

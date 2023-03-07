@@ -93,7 +93,7 @@ export const Box = forwardRef<any, BoxProps>(function Box(props, ref) {
   const theme = useTheme()
 
   const {
-    __themeKey = 'variants',
+    __themeKey, // = 'variants',
     __css,
     variant,
     css: cssProp,
@@ -109,18 +109,22 @@ export const Box = forwardRef<any, BoxProps>(function Box(props, ref) {
   }
 
   const __cssStyles = css(__css)(theme)
+  let sxWithVariant = sx
 
-  let variantKey
+  if (variant) {
+    let variantKey
 
-  if (__themeKey) {
-    variantKey = Array.isArray(variant)
-      ? variant.map((v) => `${__themeKey}.${v}`)
-      : `${__themeKey}.${variant}`
-  } else {
-    variantKey = variant
+    if (__themeKey) {
+      variantKey = Array.isArray(variant)
+        ? variant.map((v) => `${__themeKey}.${v}`)
+        : `${__themeKey}.${variant}`
+    } else {
+      variantKey = variant
+    }
+
+    sxWithVariant = { variant: variantKey, ...sx } as ThemeUIStyleObject
   }
 
-  const sxWithVariant = { variant: variantKey, ...sx } as ThemeUIStyleObject
   const sxPropStyles = css(sxWithVariant)(theme)
   const systemPropsStyles = css(pickSystemProps(rest))(theme)
   const style: ArrayInterpolation<unknown> = [
