@@ -1,3 +1,5 @@
+/** @jsxImportSource react */
+
 import React, { createContext, FC, PropsWithChildren, useContext } from 'react'
 
 export interface ThemeUILockBreakpointContextValue {
