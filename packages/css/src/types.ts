@@ -449,8 +449,6 @@ export type ThemeUICSSProperties = {
   >
 }
 
-export type ResponsiveVariant<T = string> = T | (T | null)[]
-
 export interface VariantProperty<T = string> {
   /**
    * **`Variants`** can be useful for applying complex styles to a component based on a single prop.
@@ -477,7 +475,7 @@ export interface VariantProperty<T = string> {
    *
    * @see https://styled-system.com/variants
    */
-  variant?: ResponsiveVariant<T> | null
+  variant?: ResponsiveStyleValue<T>
 }
 
 export interface ThemeDerivedStyles {
