@@ -14,7 +14,7 @@ import {
   ThemeUIStyleObject,
   VariantProperty,
 } from '@theme-ui/css'
-import type { Assign } from './types'
+import type { Assign, ForwardRef } from './types'
 import type { __ThemeUIComponentsInternalProps } from './util'
 
 const boxSystemProps = [
@@ -54,7 +54,7 @@ const boxSystemProps = [
   'opacity',
 ] as const
 
-type BoxSystemPropsKeys = typeof boxSystemProps[number]
+type BoxSystemPropsKeys = (typeof boxSystemProps)[number]
 type BoxSystemProps = Pick<ThemeUICSSProperties, BoxSystemPropsKeys>
 
 export interface BoxOwnProps extends BoxSystemProps, VariantProperty {
@@ -76,7 +76,7 @@ export const __isBoxStyledSystemProp = (prop: string) =>
   (boxSystemProps as readonly string[]).includes(prop)
 
 const pickSystemProps = (props: BoxOwnProps) => {
-  const res: Partial<Pick<BoxOwnProps, typeof boxSystemProps[number]>> = {}
+  const res: Partial<Pick<BoxOwnProps, (typeof boxSystemProps)[number]>> = {}
   for (const key of boxSystemProps) {
     // ts2590: union is too large
     ;(res as any)[key] = props[key]
@@ -89,8 +89,9 @@ const pickSystemProps = (props: BoxOwnProps) => {
  * Use the Box component as a layout primitive to add margin, padding, and colors to content.
  * @see https://theme-ui.com/components/box
  */
-export const Box = forwardRef<any, BoxProps>(function Box(props, ref) {
-  const theme = useTheme()
+export const Box: ForwardRef<any, BoxProps> = forwardRef<any, BoxProps>(
+  function Box(props, ref) {
+    const theme = useTheme()
 
   const {
     __themeKey, // = 'variants',
